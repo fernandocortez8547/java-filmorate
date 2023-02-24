@@ -17,38 +17,28 @@ public class UserController {
 
     @GetMapping
     public List<User> getUsers() {
-         return userManager.getUsersList();
+        log.info("Request started http-method=GET http-path=/users");
+
+        return userManager.getUsersList();
     }
 
     @PostMapping
     public User addUser(@RequestBody User user) {
         log.info("Request started http-method=POST http-path=/users");
 
-        if(!userManager.getUsersList().contains(user)) {
-            user = userManager.add(user);
-            log.info("Successful user add");
-        } else
-            log.warn("Incorrect http-method for update user fields");
+        user = userManager.add(user);
 
-        log.info("Request finished.");
-
+        log.info("Successful user add. Request finished.");
         return user;
     }
 
     @PutMapping
-    public User addAndUpdateUser(@RequestBody User user) {
+    public User updateUser(@RequestBody User user) {
         log.info("Request started http-method=PUT http-path=/users");
 
-        if(userManager.getUsersList().contains(user)) {
-            user = userManager.updateUser(user);
-            log.info("Successful user add");
-        } else {
-            user = userManager.add(user);
-            log.info("Successful user update");
-        }
+        user = userManager.updateUser(user);
 
-        log.info("Request finished.");
-
+        log.info("Successful user update. Request finished.");
         return user;
     }
 }

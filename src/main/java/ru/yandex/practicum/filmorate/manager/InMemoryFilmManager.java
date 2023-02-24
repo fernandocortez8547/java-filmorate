@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.manager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.yandex.practicum.filmorate.exception.UnknownIdExeption;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -21,7 +22,7 @@ public class InMemoryFilmManager {
     public final static int MAX_LENGTH = 199;
 
     public Film add(Film film) {
-        if(filmValidate(film)) {
+        if (filmValidate(film)) {
             film.setId(idGeneration());
             films.put(film.getId(), film);
         } else {
@@ -32,18 +33,12 @@ public class InMemoryFilmManager {
         return film;
     }
 
-    //TODO
     public Film updateFilm(Film film) {
-
-        if(filmValidate(film)) {
-            if (films.containsValue(film)) {
-                for (Film f : films.values()) {
-                    if (f.equals(film)) {
-                        film.setId(f.getId());
-                    }
-                }
+        if (filmValidate(film)) {
+            if (films.containsKey(film.getId())) {
                 films.put(film.getId(), film);
-            }
+            } else
+                throw new UnknownIdExeption("Некорректный 'id' фильма.");
         } else {
             log.info("Incorrect film fields validation");
             throw new ValidationException("Некорректные данные фильма.");

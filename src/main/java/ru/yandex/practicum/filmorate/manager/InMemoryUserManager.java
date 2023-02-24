@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.manager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.yandex.practicum.filmorate.exception.UnknownIdExeption;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -26,19 +27,13 @@ public class InMemoryUserManager {
         return user;
     }
 
-    //TODO
     public User updateUser(User user) {
         user = userValidate(user);
 
-        if (users.containsValue(user)) {
-            for (User u : users.values()) {
-                if (u.equals(user)) {
-                    user.setId(u.getId());
-                }
-            }
+        if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
         } else
-            add(user);
+            throw new UnknownIdExeption("Некорректный 'id' пользователя.");
 
         return user;
     }
@@ -85,6 +80,9 @@ public class InMemoryUserManager {
 
     private boolean nameValidate(String name) {
         log.info("Validate 'name' field...");
+
+        if (name == null)
+            return false;
 
         return name.length() != 0;
     }

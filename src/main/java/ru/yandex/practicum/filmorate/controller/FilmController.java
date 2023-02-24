@@ -18,6 +18,8 @@ public class FilmController {
 
     @GetMapping
     public List<Film> getFilms() {
+        log.info("Request started http-method=GET http-path=/films");
+
         return filmManager.getFilmsList();
     }
 
@@ -25,14 +27,9 @@ public class FilmController {
     public Film addFilm(@RequestBody Film film) {
         log.info("Request started http-method=POST http-path=/films");
 
-        if(!filmManager.getFilmsList().contains(film)) {
-            film = filmManager.add(film);
-            log.info("Successful film add");
-        } else
-            log.warn("Incorrect http-method for update film fields");
+        film = filmManager.add(film);
 
-        log.info("Request finished.");
-
+        log.info("Successful film add. Request finished.");
         return film;
     }
 
@@ -40,14 +37,9 @@ public class FilmController {
     public Film addAndUpdateFilm(@RequestBody Film film) {
         log.info("Request started http-method=PUT http-path=/films");
 
-        if(filmManager.getFilmsList().contains(film)) {
-            film = filmManager.updateFilm(film);
-            log.info("Successful film update");
-        } else {
-            film = filmManager.add(film);
-            log.info("Successful user add");
-        }
+        film = filmManager.updateFilm(film);
 
+        log.info("Successful film update. Request finished.");
         return film;
     }
 }

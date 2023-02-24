@@ -34,7 +34,7 @@ public class InMemoryUserManagerTest {
 
         assertEquals(user, userFromManager);
 
-        User updateUser = new User(user.getEmail(), "newLogin", user.getName(), user.getBirthay());
+        User updateUser = new User(user.getEmail(), "newLogin", user.getName(), user.getBirthday());
         updateUser.setId(user.getId());
         userFromManager = userManager.updateUser(user);
 
