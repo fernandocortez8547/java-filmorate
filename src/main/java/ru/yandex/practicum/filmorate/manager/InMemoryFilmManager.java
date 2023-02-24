@@ -26,7 +26,7 @@ public class InMemoryFilmManager {
             film.setId(idGeneration());
             films.put(film.getId(), film);
         } else {
-            log.info("Incorrect film fields validation");
+            log.warn("Incorrect film fields validation");
             throw new ValidationException("Некорректные данные фильма.");
         }
 
@@ -40,7 +40,7 @@ public class InMemoryFilmManager {
             } else
                 throw new UnknownIdExeption("Некорректный 'id' фильма.");
         } else {
-            log.info("Incorrect film fields validation");
+            log.warn("Incorrect film fields validation");
             throw new ValidationException("Некорректные данные фильма.");
         }
         return film;
