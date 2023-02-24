@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.manager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -17,7 +16,7 @@ public class InMemoryUserManager {
     private int id = 0;
 
     private final Map<Integer, User> users = new HashMap<>();
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private static final Logger log = LoggerFactory.getLogger(InMemoryUserManager.class);
 
     public User add(User user) {
         user = userValidate(user);
@@ -49,14 +48,14 @@ public class InMemoryUserManager {
     }
 
     private User userValidate(User user) {
-        if (!(emailValidate(user.getEmail()) && loginValidate(user.getLogin()) && birthdayValidate(user.getBirthay()))) {
+        if (!(emailValidate(user.getEmail()) && loginValidate(user.getLogin()) && birthdayValidate(user.getBirthday()))) {
             log.warn("Validates failed");
             throw new ValidationException("Некорректные данные пользователя.");
         }
 
         if (!nameValidate(user.getName())) {
             int userId = user.getId();
-            user = new User(user.getEmail(), user.getLogin(), user.getLogin(), user.getBirthay());
+            user = new User(user.getEmail(), user.getLogin(), user.getLogin(), user.getBirthday());
 
             if (userId != 0) {
                 user.setId(userId);

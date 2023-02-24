@@ -6,16 +6,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.manager.InMemoryUserManager;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private int id = 0;
-
-    private final Map<Integer, User> users = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final InMemoryUserManager userManager = new InMemoryUserManager();
