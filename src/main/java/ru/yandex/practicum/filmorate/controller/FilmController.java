@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.manager.InMemoryFilmManager;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @RestController
@@ -24,7 +25,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film addFilm(@RequestBody Film film) {
+    public Film addFilm(@Valid @RequestBody Film film) {
         log.info("Request started http-method=POST http-path=/films");
 
         film = filmManager.add(film);
@@ -34,7 +35,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film addAndUpdateFilm(@RequestBody Film film) {
+    public Film updateFilm(@Valid @RequestBody Film film) {
         log.info("Request started http-method=PUT http-path=/films");
 
         film = filmManager.updateFilm(film);
@@ -43,3 +44,4 @@ public class FilmController {
         return film;
     }
 }
+
