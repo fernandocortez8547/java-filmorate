@@ -12,12 +12,12 @@ import java.time.LocalDate;
 @EqualsAndHashCode(exclude = {"id"})
 public class Film {
     private int id = 0;
-    @NotBlank
+    @NotBlank(message = "название фильма не должно быть пустым")
     private final String name;
     @Size(max=200)
     private final String description;
     @AfterThan
     private final LocalDate releaseDate;
-    @Positive
+    @Positive (message = "длительность фильма должна быть больше 0")
     private final int duration;
 }

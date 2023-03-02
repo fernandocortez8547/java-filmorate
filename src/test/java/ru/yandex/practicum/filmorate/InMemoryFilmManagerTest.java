@@ -44,7 +44,8 @@ public class InMemoryFilmManagerTest {
 
     @Test
     public void addFilmWithIncorrectEmptyNameTest() {
-        film = new Film("", "someDescription", LocalDate.of(1999, 12, 1), 90);
+        film = new Film("", "someDescription", LocalDate.of(1999, 12, 1),
+                90);
 
         assertThrows(
                 ValidationException.class,
@@ -53,10 +54,8 @@ public class InMemoryFilmManagerTest {
 
     @Test
     public void addFilmWithIncorrectDescriptionLengthTest() {
-        StringBuilder description = new StringBuilder();
-        description.append("absdf".repeat(40));
-
-        film = new Film("someName", description.toString(), LocalDate.of(1999, 12, 1), 90);
+        film = new Film("someName", "tests".repeat(41), LocalDate.of(1999, 12, 1),
+                90);
 
         assertThrows(ValidationException.class,
                 () -> filmManager.add(film));
@@ -74,7 +73,8 @@ public class InMemoryFilmManagerTest {
 
     @Test
     public void addFilmWithIncorrectNegativeDurationTest() {
-        film = new Film("someName", "someDescription", LocalDate.of(1999, 12, 1), -1);
+        film = new Film("someName", "someDescription", LocalDate.of(1999, 12, 1),
+                -1);
 
         assertThrows(ValidationException.class,
                 () -> filmManager.add(film));
