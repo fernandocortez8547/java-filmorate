@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.manager.InMemoryFilmManager;
+import ru.yandex.practicum.filmorate.storage.implementation.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
@@ -11,13 +11,13 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class InMemoryFilmManagerTest {
+public class InMemoryFilmStorageTest {
     private Film film;
-    private InMemoryFilmManager filmManager;
+    private InMemoryFilmStorage filmManager;
 
     @BeforeEach
     public void createManager() {
-        filmManager = new InMemoryFilmManager();
+        filmManager = new InMemoryFilmStorage();
     }
 
     private Film createFilm() {
@@ -30,7 +30,7 @@ public class InMemoryFilmManagerTest {
     @Test
     public void addAndUpdateFilmWithCorrectFieldsTest() {
         film = createFilm();
-        Film filmFromManager = filmManager.add(film);
+        Film filmFromManager = filmManager.addFilm(film);
 
         assertEquals(film, filmFromManager);
 
@@ -49,7 +49,7 @@ public class InMemoryFilmManagerTest {
 
         assertThrows(
                 ValidationException.class,
-                () -> filmManager.add(film));
+                () -> filmManager.addFilm(film));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class InMemoryFilmManagerTest {
                 90);
 
         assertThrows(ValidationException.class,
-                () -> filmManager.add(film));
+                () -> filmManager.addFilm(film));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class InMemoryFilmManagerTest {
         film = new Film("someName", "someDescription", incorrectDate, 90);
 
         assertThrows(ValidationException.class,
-                () -> filmManager.add(film));
+                () -> filmManager.addFilm(film));
     }
 
     @Test
@@ -77,12 +77,12 @@ public class InMemoryFilmManagerTest {
                 -1);
 
         assertThrows(ValidationException.class,
-                () -> filmManager.add(film));
+                () -> filmManager.addFilm(film));
     }
 
     @Test
     public void getAllFilmsTest() {
-        filmManager.add(createFilm());
+        filmManager.addFilm(createFilm());
 
         assertEquals(1, filmManager.getFilmsList().size());
     }

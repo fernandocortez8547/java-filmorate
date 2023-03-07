@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.manager.InMemoryUserManager;
+import ru.yandex.practicum.filmorate.storage.implementation.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -13,11 +13,11 @@ import java.time.LocalDate;
 public class InMemoryUserManagerTest {
 
     private User user;
-    private InMemoryUserManager userManager;
+    private InMemoryUserStorage userManager;
 
     @BeforeEach
     public void createManager() {
-        userManager = new InMemoryUserManager();
+        userManager = new InMemoryUserStorage();
     }
 
     private User createUser() {
@@ -30,7 +30,7 @@ public class InMemoryUserManagerTest {
     @Test
     public void addAndUpdateUserWithCorrectUserFieldsTest() {
         user = createUser();
-        User userFromManager = userManager.add(user);
+        User userFromManager = userManager.addUser(user);
 
         assertEquals(user, userFromManager);
 
@@ -51,7 +51,7 @@ public class InMemoryUserManagerTest {
 
         assertThrows(
                 ValidationException.class,
-                () -> userManager.add(user)
+                () -> userManager.addUser(user)
         );
     }
 
@@ -64,7 +64,7 @@ public class InMemoryUserManagerTest {
 
         assertThrows(
                 ValidationException.class,
-                () -> userManager.add(user)
+                () -> userManager.addUser(user)
         );
     }
 
@@ -77,7 +77,7 @@ public class InMemoryUserManagerTest {
 
         assertThrows(
                 ValidationException.class,
-                () -> userManager.add(user)
+                () -> userManager.addUser(user)
         );
     }
 
@@ -90,7 +90,7 @@ public class InMemoryUserManagerTest {
 
         assertThrows(
                 ValidationException.class,
-                () -> userManager.add(user)
+                () -> userManager.addUser(user)
         );
     }
 
@@ -102,13 +102,13 @@ public class InMemoryUserManagerTest {
                 LocalDate.of(1998, 12, 16)
         );
 
-        assertEquals(user.getLogin(), userManager.add(user).getName());
+        assertEquals(user.getLogin(), userManager.addUser(user).getName());
     }
 
     @Test
     public void getAllUserTest() {
         user = createUser();
-        userManager.add(user);
+        userManager.addUser(user);
 
         assertEquals(1, userManager.getUsersList().size());
     }

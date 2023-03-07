@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.manager.InMemoryFilmManager;
+import ru.yandex.practicum.filmorate.storage.implementation.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import java.util.*;
 public class FilmController {
 
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
-    private final InMemoryFilmManager filmManager = new InMemoryFilmManager();
+    private final InMemoryFilmStorage filmManager = new InMemoryFilmStorage();
 
     @GetMapping
     public List<Film> getFilms() {
@@ -26,7 +26,7 @@ public class FilmController {
     public Film addFilm(@RequestBody Film film) {
         log.info("Request started http-method=POST http-path=/films");
 
-        film = filmManager.add(film);
+        film = filmManager.addFilm(film);
 
         log.info("Successful film add. Request finished.");
         return film;

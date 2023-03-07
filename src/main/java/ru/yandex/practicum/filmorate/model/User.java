@@ -8,6 +8,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(exclude = {"id"})
@@ -21,4 +23,10 @@ public class User {
     private final String name;
     @Past
     private final LocalDate birthday;
+
+    private List<Integer> friendsList = new ArrayList<>();
+
+    public void addFriendsId(int id) {
+        friendsList.add(id);
+    }
 }

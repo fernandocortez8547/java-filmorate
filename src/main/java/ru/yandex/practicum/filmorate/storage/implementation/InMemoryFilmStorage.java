@@ -1,11 +1,13 @@
-package ru.yandex.practicum.filmorate.manager;
+package ru.yandex.practicum.filmorate.storage.implementation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UnknownIdExeption;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -14,21 +16,23 @@ import javax.validation.ValidatorFactory;
 import java.util.*;
 
 @Service
-public class InMemoryFilmManager {
+@Component
+public class InMemoryFilmStorage implements FilmStorage {
 
     private final Validator validator;
     private int id = 0;
 
     private final Map<Integer, Film> films = new HashMap<>();
 
-    private static final Logger log = LoggerFactory.getLogger(InMemoryUserManager.class);
+    private static final Logger log = LoggerFactory.getLogger(InMemoryUserStorage.class);
 
-    public InMemoryFilmManager () {
+    public InMemoryFilmStorage() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
 
-    public Film add(Film film) {
+    @Override
+    public Film addFilm(Film film) {
         filmValidation(film);
 
         film.setId(idGeneration());
@@ -37,6 +41,7 @@ public class InMemoryFilmManager {
         return film;
     }
 
+    @Override
     public Film updateFilm(Film film) {
         filmValidation(film);
 
@@ -48,6 +53,7 @@ public class InMemoryFilmManager {
         return film;
     }
 
+    @Override
     public List<Film> getFilmsList() {
         return new ArrayList<>(films.values());
     }
