@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.storage.implementation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ObjectAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.UnknownIdExeption;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -15,7 +15,6 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.*;
 
-@Service
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
 
@@ -35,8 +34,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film addFilm(Film film) {
         filmValidation(film);
 
-        film.setId(idGeneration());
-        films.put(film.getId(), film);
+        if (!films.containsValue(film)) {
+            film.setId(idGeneration());
+            films.put(film.getId(), film);
+        } else
+            throw new ObjectAlreadyExistException("Film with name '" + film.getName() + "' already exist.");
 
         return film;
     }
@@ -48,7 +50,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
         } else
-            throw new UnknownIdExeption("Некорректный 'id' фильма.");
+            throw new UnknownIdExeption("Incorrect film 'id'");
 
         return film;
     }
@@ -58,17 +60,30 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(films.values());
     }
 
+    @Override
+    public Film getFilm(int id) {
+        if (!films.containsKey(id)) {
+            throw new UnknownIdExeption("Film with id " + id + " not added.");
+        }
+
+        return films.get(id);
+    }
+
+    @Override
+    public void removeFilm(int id) {
+        films.remove(id);
+    }
+
     private void filmValidation(Film film) {
         log.info("Start film validation...");
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
 
-        if(!violations.isEmpty()) {
-            for(ConstraintViolation<Film> violation : violations) {
+        if (!violations.isEmpty()) {
+            for (ConstraintViolation<Film> violation : violations) {
                 throw new ValidationException(violation.getMessage());
             }
         }
-
     }
 
     private int idGeneration() {

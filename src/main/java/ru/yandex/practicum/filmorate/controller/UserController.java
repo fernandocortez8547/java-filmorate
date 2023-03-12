@@ -1,37 +1,32 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.implementation.InMemoryUserStorage;
 
-import java.util.ArrayList;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    private final InMemoryUserStorage userStorage = new InMemoryUserStorage();
-    private UserService userService = new UserService(userStorage);
+    private final UserService userService;
 
-    @GetMapping
-    public List<User> getUsers() {
-        log.info("Request started http-method=GET http-path=/users");
-
-        return userStorage.getUsersList();
+    @Autowired
+    public UserController(InMemoryUserStorage userStorage) {
+        userService = new UserService(userStorage);
     }
 
     @PostMapping
-    public User addUser(@RequestBody User user, @RequestBody String string) {
+    public User addUser(@RequestBody User user) {
         log.info("Request started http-method=POST http-path=/users");
-        System.out.println(string);
-        user = userStorage.addUser(user);
+        user = userService.addUser(user);
 
         log.info("Successful user add. Request finished.");
         return user;
@@ -41,30 +36,63 @@ public class UserController {
     public User updateUser(@RequestBody User user) {
         log.info("Request started http-method=PUT http-path=/users");
 
-        user = userStorage.updateUser(user);
+        user = userService.updateUser(user);
 
         log.info("Successful user update. Request finished.");
         return user;
     }
 
-    @PostMapping("/friends")
-    public void addFriendsList(@RequestBody String usersId) {
-        log.info("Request started http-method=POST http-path=/users/friends");
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<String> ids = new ArrayList<>();
-        try {
-            ids = objectMapper.readValue(usersId, List<java.lang.String>.class);
-        } catch (JsonProcessingException e) {
-            System.out.println(e.getMessage());
-        }
-        System.out.println(ids);
+    @GetMapping
+    public List<User> getUsers() {
+        log.info("Request started http-method=GET http-path=/users");
 
+        return userService.getUsersList();
     }
 
-    @GetMapping("/getArray")
-    public int[] returnArray() {
-        int[] someArray = {1, 2, 4};
-        return someArray;
+    @GetMapping("{id}")
+    public User getUser(@PathVariable int id) {
+        log.info("Request started http-method=GET http-path=/users/{id}");
+
+        return userService.getUser(id);
+    }
+
+    @DeleteMapping("{id}")
+    public void deleteUser(@PathVariable int id) {
+        log.info("Request started http-method=GET http-path=/users/{id}");
+
+        userService.removeUser(id);
+    }
+
+    @PostMapping("{id}/friends/{friendId}")
+    public List<User> addFriendsList(@PathVariable int id, @PathVariable int friendId) {
+        log.info("Request started http-method=POST http-path=/users/{id}/friends{friendId}");
+
+        List<User> users = userService.addUsersFriends(id, friendId);
+
+        log.info("Successful add friend. Request finished.");
+        return users;
+    }
+
+    @GetMapping("{id}/friends")
+    public List<User> getUserFriends(@PathVariable int id) {
+        log.info("Request started http-method=POST http-path=/users/{id}/friends");
+
+        return userService.getUserFriends(id);
+    }
+
+    @GetMapping("{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
+        return userService.getCommonFriends(id, otherId);
+    }
+
+    @DeleteMapping("{id}/friends/{friendId}")
+    public List<User> deleteFromFriends(@PathVariable int id, @PathVariable int friendId) {
+        log.info("Request started http-method=DELETE http-path=/users/{id}/friends{friendId}");
+
+        List<User> users = userService.removeUsersFromFriend(id, friendId);
+
+        log.info("Successful friend delete. Request finished.");
+        return users;
     }
 }
 

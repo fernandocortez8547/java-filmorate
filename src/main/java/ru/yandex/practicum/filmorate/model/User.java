@@ -17,8 +17,8 @@ public class User {
     private int id = 0;
     @Email
     private final String email;
-    @NotBlank
-    @NotSpace
+    @NotBlank(message = "логин не должен быть пустым")
+    @NotSpace(message = "логин не может содержать пробелы")
     private final String login;
     private final String name;
     @Past
@@ -26,7 +26,11 @@ public class User {
 
     private List<Integer> friendsList = new ArrayList<>();
 
-    public void addFriendsId(int id) {
+    public void addFriend(int id) {
         friendsList.add(id);
+    }
+
+    public void removeFriend(Integer id) {
+        friendsList.remove(id);
     }
 }

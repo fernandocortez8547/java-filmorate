@@ -3,11 +3,10 @@ package ru.yandex.practicum.filmorate.storage.implementation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UnknownIdExeption;
+import ru.yandex.practicum.filmorate.exception.ObjectAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.ConstraintViolation;
@@ -16,7 +15,6 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.*;
 
-@Service
 @Component
 public class InMemoryUserStorage implements UserStorage {
 
@@ -35,9 +33,12 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User addUser(User user) {
         user = userValidation(user);
+        if(!users.containsValue(user)) {
+            user.setId(idGeneration());
+            users.put(user.getId(), user);
+        } else
+            throw new ObjectAlreadyExistException("User with email '" + user.getEmail() + "' is already exist.");
 
-        user.setId(idGeneration());
-        users.put(user.getId(), user);
         return user;
     }
 
@@ -58,12 +59,19 @@ public class InMemoryUserStorage implements UserStorage {
         return new ArrayList<>(users.values());
     }
 
+    @Override
     public User getUser(int id) {
         if(!users.containsKey(id)) {
+            System.out.println(users);
             throw new UnknownIdExeption("Storage don't have user with id " + id);
         }
 
         return users.get(id);
+    }
+
+    @Override
+    public void removeUser(int id) {
+        users.remove(id);
     }
 
     private User userValidation(User user) {
