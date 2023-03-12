@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.implementation.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.implementation.InMemoryUserStorage;
 
+import javax.validation.Valid;
 import java.util.*;
 
 @CrossOrigin
@@ -25,7 +26,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film addFilm(@RequestBody Film film) {
+    public Film addFilm(@Valid @RequestBody Film film) {
         log.info("Request started http-method=POST http-path=/films");
 
         film = filmService.addFilm(film);
@@ -35,7 +36,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film updateFilm(@RequestBody Film film) {
+    public Film updateFilm(@Valid @RequestBody Film film) {
         log.info("Request started http-method=PUT http-path=/films");
 
         film = filmService.updateFilm(film);

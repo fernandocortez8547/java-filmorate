@@ -17,8 +17,8 @@ public class User {
     private int id = 0;
     @Email
     private final String email;
-    @NotBlank(message = "логин не должен быть пустым")
-    @NotSpace(message = "логин не может содержать пробелы")
+    @NotBlank
+    @NotSpace
     private final String login;
     private final String name;
     @Past

@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.implementation.InMemoryUserStorage;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @CrossOrigin
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User addUser(@RequestBody User user) {
+    public User addUser(@Valid @RequestBody User user) {
         log.info("Request started http-method=POST http-path=/users");
         user = userService.addUser(user);
 
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User user) {
+    public User updateUser(@Valid @RequestBody User user) {
         log.info("Request started http-method=PUT http-path=/users");
 
         user = userService.updateUser(user);

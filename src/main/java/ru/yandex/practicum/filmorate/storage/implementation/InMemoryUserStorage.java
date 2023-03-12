@@ -1,18 +1,11 @@
 package ru.yandex.practicum.filmorate.storage.implementation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.UnknownIdExeption;
 import ru.yandex.practicum.filmorate.exception.ObjectAlreadyExistException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.*;
 
 @Component
@@ -22,17 +15,9 @@ public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Integer, User> users = new HashMap<>();
 
-    private static final Logger log = LoggerFactory.getLogger(InMemoryUserStorage.class);
-    private final Validator validator;
-
-    public InMemoryUserStorage() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
-
     @Override
     public User addUser(User user) {
-        user = userValidation(user);
+        user = nameValidate(user);
         if(!users.containsValue(user)) {
             user.setId(idGeneration());
             users.put(user.getId(), user);
@@ -44,7 +29,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        user = userValidation(user);
+        user = nameValidate(user);
 
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
@@ -71,20 +56,6 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void removeUser(int id) {
         users.remove(id);
-    }
-
-    private User userValidation(User user) {
-        log.info("Start user validation...");
-
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
-
-        if(!violations.isEmpty()) {
-            for(ConstraintViolation<User> violation : violations) {
-                throw new ValidationException(violation.getMessage());
-            }
-        }
-
-        return nameValidate(user);
     }
 
     private User nameValidate(User user) {
