@@ -63,7 +63,7 @@ public class UserController {
         userService.removeUser(id);
     }
 
-    @PostMapping("{id}/friends/{friendId}")
+    @PutMapping("{id}/friends/{friendId}")
     public List<User> addFriendsList(@PathVariable int id, @PathVariable int friendId) {
         log.info("Request started http-method=POST http-path=/users/{id}/friends{friendId}");
 

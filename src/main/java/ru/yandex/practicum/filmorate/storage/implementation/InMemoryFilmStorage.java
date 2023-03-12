@@ -63,7 +63,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film getFilm(int id) {
         if (!films.containsKey(id)) {
-            throw new UnknownIdExeption("Film with id " + id + " not added.");
+            throw new UnknownIdExeption("Film with id '" + id + "' not added.");
         }
 
         return films.get(id);

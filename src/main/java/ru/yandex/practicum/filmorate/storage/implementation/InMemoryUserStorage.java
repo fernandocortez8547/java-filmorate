@@ -49,7 +49,7 @@ public class InMemoryUserStorage implements UserStorage {
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
         } else
-            throw new UnknownIdExeption("Некорректный 'id' пользователя.");
+            throw new UnknownIdExeption("Incorrect user id: '" + user.getId() + "'.");
 
         return user;
     }
@@ -62,7 +62,6 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User getUser(int id) {
         if(!users.containsKey(id)) {
-            System.out.println(users);
             throw new UnknownIdExeption("Storage don't have user with id " + id);
         }
 

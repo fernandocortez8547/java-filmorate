@@ -86,7 +86,7 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count) {
+    public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "11") int count) {
         log.info("Request started http-method=GET http-path=/films/popular?count={count}");
 
         return filmService.sortFilmsList(count);
