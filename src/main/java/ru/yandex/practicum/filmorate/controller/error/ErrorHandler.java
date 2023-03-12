@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.exception.handler;
+package ru.yandex.practicum.filmorate.controller.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.filmorate.exception.ObjectAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.UnknownIdExeption;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.util.List;
 import java.util.Map;
