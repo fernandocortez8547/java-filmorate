@@ -17,6 +17,7 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping

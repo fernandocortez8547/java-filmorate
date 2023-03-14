@@ -3,8 +3,6 @@ package ru.yandex.practicum.filmorate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import ru.yandex.practicum.filmorate.storage.implementation.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.implementation.InMemoryUserStorage;
 
 @SpringBootApplication
 public class FilmorateApplication {
