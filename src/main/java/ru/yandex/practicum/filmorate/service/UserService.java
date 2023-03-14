@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exception.ObjectAlreadyExistException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -11,11 +11,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    private final UserStorage userStorage;
-
-    public UserService(UserStorage storage) {
-        this.userStorage = storage;
-    }
+    @Autowired
+    private UserStorage userStorage;
 
     public User addUser(User user) {
         return userStorage.addUser(user);

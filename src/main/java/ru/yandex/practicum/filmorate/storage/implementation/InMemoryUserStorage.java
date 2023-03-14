@@ -17,7 +17,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User addUser(User user) {
-        user = nameValidate(user);
+//        user = nameValidate(user);
         if(!users.containsValue(user)) {
             user.setId(idGeneration());
             users.put(user.getId(), user);
@@ -29,7 +29,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        user = nameValidate(user);
+//        user = nameValidate(user);
 
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
@@ -58,21 +58,21 @@ public class InMemoryUserStorage implements UserStorage {
         users.remove(id);
     }
 
-    private User nameValidate(User user) {
-        String name = user.getName();
-        String login = user.getLogin();
-
-        if(name == null || name.length() == 0) {
-                int userId = user.getId();
-                user = new User(user.getEmail(), login, login, user.getBirthday());
-
-                if (userId != 0) {
-                    user.setId(userId);
-                }
-        }
-
-        return user;
-    }
+//    private User nameValidate(User user) {
+//        String name = user.getName();
+//        String login = user.getLogin();
+//
+//        if(name == null || name.length() == 0) {
+//                int userId = user.getId();
+//                user = new User(user.getEmail(), login, login, user.getBirthday());
+//
+//                if (userId != 0) {
+//                    user.setId(userId);
+//                }
+//        }
+//
+//        return user;
+//    }
 
 
     private int idGeneration() {

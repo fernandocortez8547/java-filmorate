@@ -11,9 +11,6 @@ public class FilmorateApplication {
 
 	public static void main(String[] args) {
 		ApplicationContext context = SpringApplication.run(FilmorateApplication.class, args);
-
-		InMemoryFilmStorage filmStorage = context.getBean(InMemoryFilmStorage.class);
-		InMemoryUserStorage userStorage = context.getBean(InMemoryUserStorage.class);
 	}
 
 }

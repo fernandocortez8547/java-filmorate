@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import ru.yandex.practicum.filmorate.annotation.NotSpace;
@@ -20,6 +21,7 @@ public class User {
     @NotBlank
     @NotSpace
     private final String login;
+    @JsonIgnore
     private final String name;
     @Past
     private final LocalDate birthday;

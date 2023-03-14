@@ -15,14 +15,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
-
-    private final UserService userService;
-
     @Autowired
-    public UserController(InMemoryUserStorage userStorage) {
-        userService = new UserService(userStorage);
-    }
+    private UserService userService;
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
