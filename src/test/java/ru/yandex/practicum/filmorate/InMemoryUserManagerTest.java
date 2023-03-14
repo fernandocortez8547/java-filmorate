@@ -93,16 +93,16 @@ public class InMemoryUserManagerTest {
 //        );
 //    }
 //
-//    @Test
-//    public void addUserWithEmptyNameTest() {
-//        user = new User("Email@With.At",
-//                "someLogin",
-//                "",
-//                LocalDate.of(1998, 12, 16)
-//        );
-//
-//        assertEquals(user.getLogin(), userManager.addUser(user).getName());
-//    }
+    @Test
+    public void addUserWithEmptyNameTest() {
+        user = new User("Email@With.At",
+                "someLogin",
+                "",
+                LocalDate.of(1998, 12, 16)
+        );
+
+        assertEquals(user.getLogin(), userManager.addUser(user).getName());
+    }
 
     @Test
     public void getAllUserTest() {
