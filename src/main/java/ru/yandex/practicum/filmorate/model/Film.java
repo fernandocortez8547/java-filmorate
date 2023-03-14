@@ -7,6 +7,8 @@ import ru.yandex.practicum.filmorate.annotation.AfterThan;
 import javax.validation.constraints.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(exclude = {"id"})
@@ -20,4 +22,12 @@ public class Film {
     private final LocalDate releaseDate;
     @Positive (message = "длительность фильма должна быть больше 0")
     private final int duration;
+
+    private List<Integer> likesList = new ArrayList<>();
+
+    public void addLike(int id) {
+        likesList.add(id);
+    }
+
+    public void removeLike(Integer id) { likesList.remove(id); }
 }
