@@ -1,4 +1,6 @@
 # java-filmorate
 
 ER-диаграмма: 
-![Untitled](https://user-images.githubusercontent.com/108097219/226206087-32d05b18-02ed-4ded-9e47-95574a2f5e66.png)
+
+<img src="https://user-images.githubusercontent.com/108097219/226206162-2b572c0a-22ad-4342-91d1-40f8877a9058.png" width="900"> </img>
+
