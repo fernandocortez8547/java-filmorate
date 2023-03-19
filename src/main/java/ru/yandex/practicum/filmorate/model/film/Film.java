@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.model.film;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,8 +22,16 @@ public class Film {
     private final LocalDate releaseDate;
     @Positive (message = "длительность фильма должна быть больше 0")
     private final int duration;
+    @NotNull
+    private final Rating rating;
+
+    private List<Genre> genres;
 
     private List<Integer> likesList = new ArrayList<>();
+
+    public  void addGenre(Genre genre) {
+        genres.add(genre);
+    }
 
     public void addLike(int id) {
         likesList.add(id);

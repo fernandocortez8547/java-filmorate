@@ -2,8 +2,9 @@ package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.model.film.Rating;
 import ru.yandex.practicum.filmorate.storage.implementation.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.film.Film;
 
 import java.time.LocalDate;
 
@@ -22,7 +23,7 @@ public class InMemoryFilmStorageTest {
         return new Film("SomeFilm",
                 "SomeDescription",
                 LocalDate.of(1998, 12, 16),
-                90);
+                90, Rating.PG);
     }
 
     @Test
@@ -32,7 +33,11 @@ public class InMemoryFilmStorageTest {
 
         assertEquals(film, filmFromManager);
 
-        Film updateFilm = new Film(film.getName(), "newDescription", film.getReleaseDate(), film.getDuration());
+        Film updateFilm = new Film(film.getName(),
+                "newDescription",
+                film.getReleaseDate(),
+                film.getDuration(),
+                Rating.PG);
         updateFilm.setId(film.getId());
         filmFromManager = filmManager.updateFilm(film);
 
@@ -40,43 +45,6 @@ public class InMemoryFilmStorageTest {
         assertEquals(film.getId(), filmFromManager.getId());
     }
 
-//    @Test
-//    public void addFilmWithIncorrectEmptyNameTest() {
-//        film = new Film("", "someDescription", LocalDate.of(1999, 12, 1),
-//                90);
-//
-//        assertThrows(
-//                ValidationException.class,
-//                () -> filmManager.addFilm(film));
-//    }
-//
-//    @Test
-//    public void addFilmWithIncorrectDescriptionLengthTest() {
-//        film = new Film("someName", "tests".repeat(41), LocalDate.of(1999, 12, 1),
-//                90);
-//
-//        assertThrows(ValidationException.class,
-//                () -> filmManager.addFilm(film));
-//    }
-//
-//    @Test
-//    public void addFilmWithIncorrectReleaseDateTest() {
-//        LocalDate incorrectDate = LocalDate.of(1895, 12, 17);
-//
-//        film = new Film("someName", "someDescription", incorrectDate, 90);
-//
-//        assertThrows(ValidationException.class,
-//                () -> filmManager.addFilm(film));
-//    }
-//
-//    @Test
-//    public void addFilmWithIncorrectNegativeDurationTest() {
-//        film = new Film("someName", "someDescription", LocalDate.of(1999, 12, 1),
-//                -1);
-//
-//        assertThrows(ValidationException.class,
-//                () -> filmManager.addFilm(film));
-//    }
 
     @Test
     public void getAllFilmsTest() {

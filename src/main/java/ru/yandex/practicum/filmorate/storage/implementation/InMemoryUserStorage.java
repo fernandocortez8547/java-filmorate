@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.storage.implementation;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.UnknownIdExeption;
 import ru.yandex.practicum.filmorate.exception.ObjectAlreadyExistException;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
