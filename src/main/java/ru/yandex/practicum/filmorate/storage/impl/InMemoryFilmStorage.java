@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.implementation;
+package ru.yandex.practicum.filmorate.storage.impl;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ObjectAlreadyExistException;
@@ -53,6 +53,16 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public void removeFilm(int id) {
         films.remove(id);
+    }
+
+    @Override
+    public Film addLike(int filmId, int userId) {
+        return null;
+    }
+
+    @Override
+    public Film deleteLike(int filmId, int userId) {
+        return null;
     }
 
     private int idGeneration() {

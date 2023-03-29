@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.implementation;
+package ru.yandex.practicum.filmorate.storage.impl;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.UnknownIdExeption;

@@ -79,12 +79,12 @@ public class FilmController {
         log.info("Successful delete like. Request finished.");
         return film;
     }
-
-    @GetMapping("/popular")
-    public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count) {
-        log.info("Request started http-method=GET http-path=/films/popular?count={count}");
-
-        return filmService.sortFilmsList(count);
-    }
+//
+//    @GetMapping("/popular")
+//    public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count) {
+//        log.info("Request started http-method=GET http-path=/films/popular?count={count}");
+//
+//        return filmService.sortFilmsList(count);
+//    }
 }
 
