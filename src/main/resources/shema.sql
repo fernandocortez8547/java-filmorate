@@ -14,10 +14,10 @@ CREATE TABLE IF NOT EXISTS "user" (
   birthday date NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "friends_request" (
-  "user_id" int REFERENCES "user"("user_id"),
-  "friend_id" int REFERENCES "user"("user_id"),
-  "status" boolean
+CREATE TABLE IF NOT EXISTS friends_request (
+  user_id int REFERENCES "user"(user_id),
+  friend_id int REFERENCES "user"(user_id),
+  status boolean
 );
 
 CREATE TABLE IF NOT EXISTS genre (

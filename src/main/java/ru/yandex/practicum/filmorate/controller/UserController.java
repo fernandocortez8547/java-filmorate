@@ -60,13 +60,13 @@ public class UserController {
     }
 
     @PutMapping("{id}/friends/{friendId}")
-    public List<User> addFriendsList(@PathVariable int id, @PathVariable int friendId) {
+    public User addFriendsList(@PathVariable int id, @PathVariable int friendId) {
         log.info("Request started http-method=POST http-path=/users/{id}/friends{friendId}");
 
-        List<User> users = userService.addUsersFriends(id, friendId);
+        User user = userService.addUsersFriends(id, friendId);
 
         log.info("Successful add friend. Request finished.");
-        return users;
+        return user;
     }
 
     @GetMapping("{id}/friends")
@@ -76,19 +76,14 @@ public class UserController {
         return userService.getUserFriends(id);
     }
 
+    @DeleteMapping("{id}/friends/{friendId}")
+    public void deleteFromFriends(@PathVariable int id, @PathVariable int friendId) {
+        userService.deleteFromFriends(id, friendId);
+    }
+
     @GetMapping("{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
         return userService.getCommonFriends(id, otherId);
-    }
-
-    @DeleteMapping("{id}/friends/{friendId}")
-    public List<User> deleteFromFriends(@PathVariable int id, @PathVariable int friendId) {
-        log.info("Request started http-method=DELETE http-path=/users/{id}/friends{friendId}");
-
-        List<User> users = userService.removeUsersFromFriend(id, friendId);
-
-        log.info("Successful friend delete. Request finished.");
-        return users;
     }
 }
 

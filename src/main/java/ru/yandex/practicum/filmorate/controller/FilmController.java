@@ -70,6 +70,11 @@ public class FilmController {
         return film;
     }
 
+    @GetMapping("{id}/like")
+    public List<Integer> getFilmLikes(@PathVariable int id) {
+        return filmService.getFilmLikes(id);
+    }
+
     @DeleteMapping("{id}/like/{userId}")
     public Film deleteLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Request started http-method=DELETE http-path=/films/{id}/like/{userId}");
@@ -79,12 +84,12 @@ public class FilmController {
         log.info("Successful delete like. Request finished.");
         return film;
     }
-//
-//    @GetMapping("/popular")
-//    public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count) {
-//        log.info("Request started http-method=GET http-path=/films/popular?count={count}");
-//
-//        return filmService.sortFilmsList(count);
-//    }
+
+    @GetMapping("/popular")
+    public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count) {
+        log.info("Request started http-method=GET http-path=/films/popular?count={count}");
+
+        return filmService.sortFilmsList(count);
+    }
 }
 

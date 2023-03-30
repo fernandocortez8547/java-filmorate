@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Primary
-@Component("inDBFilmStorage")
+@Component("dbFilmStorage")
 @RequiredArgsConstructor
 public class InDbFilmStorage implements FilmStorage {
 
@@ -53,7 +53,7 @@ public class InDbFilmStorage implements FilmStorage {
 
 
         final String ratingAddQuery = "INSERT INTO film_rating (film_id, rating_id)" + "VALUES (?, ?)";
-        jdbcTemplate.update(ratingAddQuery, film.getId(), film.getRating().getRatingId());
+        jdbcTemplate.update(ratingAddQuery, film.getId(), film.getRating().getId());
         film.setRating(findRating(film.getId()));
 
         final String genresAddQuery = "INSERT INTO film_genres (film_id, genre_id)" + "VALUES (?, ?)";
@@ -71,7 +71,7 @@ public class InDbFilmStorage implements FilmStorage {
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(dbContainsQuery, film.getId());
         if (!rowSet.next()) {
-            throw new UnknownIdExeption("Storage don't have user with id " + film.getId());
+            throw new UnknownIdExeption("Storage don't have film with id " + film.getId());
         }
 
         String updateFilmQuery = "UPDATE film SET film_name = ?," +
@@ -83,7 +83,7 @@ public class InDbFilmStorage implements FilmStorage {
             String setRatingQuery = "INSERT INTO film_rating (film_id, rating_id)" + "VALUES (?, ?)";
 
             jdbcTemplate.update(deleteOldRatingQuery, film.getId());
-            jdbcTemplate.update(setRatingQuery, film.getId(), film.getRating().getRatingId());
+            jdbcTemplate.update(setRatingQuery, film.getId(), film.getRating().getId());
         }
 
         if (film.getGenres() != null) {
@@ -119,6 +119,7 @@ public class InDbFilmStorage implements FilmStorage {
     public void removeFilm(int id) {
         jdbcTemplate.update("DELETE FROM film_rating WHERE film_id = ?", id);
         jdbcTemplate.update("DELETE FROM film_genres WHERE film_id = ?", id);
+        jdbcTemplate.update("DELETE FROM film_like WHERE film_id = ?", id);
         jdbcTemplate.update("DELETE FROM film WHERE film_id = ?", id);
     }
 
@@ -142,9 +143,28 @@ public class InDbFilmStorage implements FilmStorage {
         return getFilm(filmId);
     }
 
+    @Override
+    public List<Integer> getFilmLikes(int filmId) {
+        final String userLikesQuery = "SELECT user_id FROM film_like WHERE film_id = ?";
+
+        return jdbcTemplate.query(userLikesQuery, (rs, rn) -> rs.getInt("user_id"), filmId);
+    }
+
+    @Override
+    public List<Film> findMostPopularFilm(int limit) {
+        final String mostLikeFilmQuery = "SELECT f.*, fl.cf FROM film AS f " +
+                "LEFT JOIN " +
+                "(SELECT film_id, COUNT(user_id) as cf FROM film_like GROUP BY film_id ORDER BY COUNT(user_id)) " +
+                "AS fl ON f.film_id = fl.film_id " +
+                "ORDER BY fl.cf DESC " +
+                "LIMIT ?";
+
+        return jdbcTemplate.query(mostLikeFilmQuery, this::makeFilm, limit);
+    }
+
     private void validate(int filmId, int userId) {
         final String filmValidateQuery = "SELECT * FROM film WHERE film_id = ?";
-        final String userValidateQuery = "SELECT * FROM user WHERE user_id = ?";
+        final String userValidateQuery = "SELECT * FROM \"user\" WHERE user_id = ?";
 
         SqlRowSet filmRowSet = jdbcTemplate.queryForRowSet(filmValidateQuery, filmId);
         SqlRowSet userRowSet = jdbcTemplate.queryForRowSet(userValidateQuery, userId);
@@ -162,11 +182,10 @@ public class InDbFilmStorage implements FilmStorage {
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(genresSqlQuery, filmId);
 
-        if (rowSet.next()) {
+        if (rowSet.next())
             return jdbcTemplate.query(genresSqlQuery, this::makeGenre, filmId);
-        } else {
+        else
             return null;
-        }
     }
 
     private Rating findRating(int filmId) {

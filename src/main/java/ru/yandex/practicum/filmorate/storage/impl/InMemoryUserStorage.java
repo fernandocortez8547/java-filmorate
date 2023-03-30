@@ -58,13 +58,36 @@ public class InMemoryUserStorage implements UserStorage {
         users.remove(id);
     }
 
+    @Override
+    public User addFriendship(int userId, int friendId) {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public List<User> getUserFriends(int id) {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public void removeFriendship(int userId, int friendId) {
+        //TODO
+    }
+
+    @Override
+    public List<User> getCommonFriend(int userId, int friendId) {
+        //TODO
+        return null;
+    }
+
     private User nameValidate(User user) {
         String name = user.getName();
         String login = user.getLogin();
 
         if(name == null || name.length() == 0) {
                 int userId = user.getId();
-                user = new User(user.getEmail(), login, login, user.getBirthday());
+                user = new User(userId, user.getEmail(), login, login, user.getBirthday());
 
                 if (userId != 0) {
                     user.setId(userId);

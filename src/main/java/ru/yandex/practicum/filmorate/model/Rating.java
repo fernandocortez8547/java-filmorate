@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class Rating {
-    private int ratingId;
+    private int id;
     private String ratingName;
 }
