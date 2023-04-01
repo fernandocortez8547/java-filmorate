@@ -1,17 +1,16 @@
-package ru.yandex.practicum.filmorate.storage.impl;
+package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.ObjectAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.UnknownIdExeption;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Rating;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.Date;
@@ -24,14 +23,10 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Primary
-@Component("dbFilmStorage")
+@Component
 @RequiredArgsConstructor
 public class InDbFilmStorage implements FilmStorage {
-
-    @Autowired
     private final JdbcTemplate jdbcTemplate;
-    private static final Logger log = LoggerFactory.getLogger(InDbFilmStorage.class);
 
     @Override
     public Film addFilm(Film film) {
@@ -51,10 +46,9 @@ public class InDbFilmStorage implements FilmStorage {
 
         film.setId(Objects.requireNonNull(id.getKey()).intValue());
 
-
         final String ratingAddQuery = "INSERT INTO film_rating (film_id, rating_id)" + "VALUES (?, ?)";
-        jdbcTemplate.update(ratingAddQuery, film.getId(), film.getRating().getId());
-        film.setRating(findRating(film.getId()));
+        jdbcTemplate.update(ratingAddQuery, film.getId(), film.getMpa().getId());
+        film.setMpa(findRating(film.getId()));
 
         final String genresAddQuery = "INSERT INTO film_genres (film_id, genre_id)" + "VALUES (?, ?)";
         for (Genre g : film.getGenres()) {
@@ -78,12 +72,12 @@ public class InDbFilmStorage implements FilmStorage {
                 " film_description = ?, release_date = ?," +
                 " duration = ? WHERE film_id = ?";
 
-        if (film.getRating() != null) {
+        if (film.getMpa() != null) {
             String deleteOldRatingQuery = "DELETE FROM film_rating WHERE film_id = ?";
             String setRatingQuery = "INSERT INTO film_rating (film_id, rating_id)" + "VALUES (?, ?)";
 
             jdbcTemplate.update(deleteOldRatingQuery, film.getId());
-            jdbcTemplate.update(setRatingQuery, film.getId(), film.getRating().getId());
+            jdbcTemplate.update(setRatingQuery, film.getId(), film.getMpa().getId());
         }
 
         if (film.getGenres() != null) {
@@ -100,7 +94,7 @@ public class InDbFilmStorage implements FilmStorage {
                 film.getReleaseDate(), film.getDuration(), film.getId());
 
         film.setGenres(findGenres(film.getId()));
-        film.setRating(findRating(film.getId()));
+        film.setMpa(findRating(film.getId()));
 
         return film;
     }
@@ -128,6 +122,7 @@ public class InDbFilmStorage implements FilmStorage {
         final String likeFilmQuery = "INSERT INTO film_like (film_id, user_id) VALUES (?, ?)";
 
         validate(filmId, userId);
+        validateLike(filmId, userId);
         jdbcTemplate.update(likeFilmQuery, filmId, userId);
 
         return getFilm(filmId);
@@ -174,6 +169,16 @@ public class InDbFilmStorage implements FilmStorage {
         }
     }
 
+    private void validateLike(int filmId, int userId) {
+        final String sqlQuery = "SELECT * FROM film_like WHERE film_id = ? AND user_id = ?";
+
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery, filmId, userId);
+
+        if(rowSet.next()) {
+            throw new ObjectAlreadyExistException("User like is already exist for film with id " + filmId);
+        }
+    }
+
     private List<Genre> findGenres(int filmId) {
         final String genresSqlQuery = "SELECT fg.genre_id, name " +
                 "FROM genre " +
@@ -188,7 +193,7 @@ public class InDbFilmStorage implements FilmStorage {
             return null;
     }
 
-    private Rating findRating(int filmId) {
+    private Mpa findRating(int filmId) {
         final String genresSqlQuery = "SELECT fr.rating_id, name " +
                 "FROM rating " +
                 "LEFT JOIN film_rating as fr on rating.rating_id = fr.rating_id " +
@@ -217,8 +222,8 @@ public class InDbFilmStorage implements FilmStorage {
         );
     }
 
-    private Rating makeRating(ResultSet rs, int rn) throws SQLException {
-        return new Rating(
+    private Mpa makeRating(ResultSet rs, int rn) throws SQLException {
+        return new Mpa(
                 rs.getInt("rating_id"),
                 rs.getString("name")
         );

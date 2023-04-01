@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.impl;
+package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +18,15 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
-@Component("dbUserStorage")
+@Component
 @RequiredArgsConstructor
 public class InDbUserStorage implements UserStorage {
-    @Autowired
     private final JdbcTemplate jdbcTemplate;
 
     @Override
     public User addUser(User user) {
+        user.setName(nameValidate(user));
+
         final String userAddQuery = "INSERT INTO \"user\" (email, login, name, birthday) VALUES (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -46,6 +47,8 @@ public class InDbUserStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
+        user.setName(nameValidate(user));
+
         final String findUserQuery = "SELECT * FROM \"user\" WHERE user_id = ?";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(findUserQuery, user.getId());
 
@@ -163,5 +166,15 @@ public class InDbUserStorage implements UserStorage {
                 rs.getString("name"),
                 rs.getDate("birthday").toLocalDate()
         );
+    }
+
+    private String nameValidate(User user) {
+        String name = user.getName();
+
+        if(name == null || name.length() == 0) {
+            return user.getLogin();
+        }
+
+        return user.getName();
     }
 }

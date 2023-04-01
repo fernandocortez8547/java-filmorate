@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class Genre {
+public class Mpa {
     private int id;
     private String name;
 }

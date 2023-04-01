@@ -9,7 +9,8 @@ import java.util.List;
 @EqualsAndHashCode(exclude = {"id"})
 @Getter
 @Setter
-@AllArgsConstructor()
+@Builder(toBuilder = true)
+@AllArgsConstructor
 public class Film {
     private int id;
     @NotBlank(message = "название фильма не должно быть пустым")
@@ -20,6 +21,6 @@ public class Film {
     private final LocalDate releaseDate;
     @Positive (message = "длительность фильма должна быть больше 0")
     private final int duration;
-    private Rating rating;
+    private Mpa mpa;
     private List<Genre> genres;
 }

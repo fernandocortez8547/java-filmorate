@@ -15,6 +15,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = {"id"})
+@Builder(toBuilder = true)
 public class User {
     private int id;
     @Email
@@ -22,7 +23,7 @@ public class User {
     @NotBlank
     @NotSpace
     private final String login;
-    private final String name;
+    private String name;
     @Past
     private final LocalDate birthday;
 }

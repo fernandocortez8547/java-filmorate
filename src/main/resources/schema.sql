@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS friends_request (
 
 CREATE TABLE IF NOT EXISTS genre (
   genre_id int PRIMARY KEY,
-  name varchar(5)
+  name varchar(20)
 );
 
 CREATE TABLE IF NOT EXISTS film_genres (

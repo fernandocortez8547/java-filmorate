@@ -1,33 +1,32 @@
-package ru.yandex.practicum.filmorate.storage.impl;
+package ru.yandex.practicum.filmorate.storage.dao;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.UnknownIdExeption;
-import ru.yandex.practicum.filmorate.model.Rating;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
 @Component
-public class InDbRatingStorage {
+@RequiredArgsConstructor
+public class InDbMpaStorage {
+    private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    public Collection<Rating> getAllRatings() {
+    public List<Mpa> getMpaList() {
         final String sqlQuery = "SELECT * FROM rating";
 
         return jdbcTemplate.query(sqlQuery, this::makeMpa);
     }
 
-    public Rating getRatingById(int id) {
+    public Mpa getMpaById(int id) {
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from rating where rating_id = ?", id);
 
         if(userRows.next()) {
-            return new Rating(
+            return new Mpa(
                     userRows.getInt("rating_id"),
                     userRows.getString("name")
             );
@@ -36,10 +35,10 @@ public class InDbRatingStorage {
         }
     }
 
-    private Rating makeMpa(ResultSet resultSet, int rowNum) throws SQLException {
+    private Mpa makeMpa(ResultSet resultSet, int rowNum) throws SQLException {
         int id = resultSet.getInt("rating_id");
         String nameMpa = resultSet.getString("name");
 
-        return new Rating(id, nameMpa);
+        return new Mpa(id, nameMpa);
     }
 }
