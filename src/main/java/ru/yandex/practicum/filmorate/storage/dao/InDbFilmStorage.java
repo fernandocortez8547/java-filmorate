@@ -100,7 +100,6 @@ public class InDbFilmStorage implements FilmStorage {
         } else {
             film.setGenres(Collections.emptySet());
         }
-
         film.setMpa(findRating(film.getId()));
 
         return film;
