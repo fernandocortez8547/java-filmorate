@@ -15,7 +15,7 @@ public class Film {
     private int id;
     @NotBlank(message = "название фильма не должно быть пустым")
     private final String name;
-    @Size(max=200)
+    @Size(max = 200)
     private final String description;
     @AfterThan
     private final LocalDate releaseDate;
