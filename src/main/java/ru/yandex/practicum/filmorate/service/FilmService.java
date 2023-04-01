@@ -11,7 +11,9 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
 
-    public FilmService(FilmStorage filmStorage) { this.filmStorage = filmStorage; }
+    public FilmService(FilmStorage filmStorage) {
+        this.filmStorage = filmStorage;
+    }
 
     public Film addFilm(Film film) {
         return filmStorage.addFilm(film);
@@ -37,8 +39,8 @@ public class FilmService {
         return filmStorage.addLike(filmId, userId);
     }
 
-    public List<Integer> getFilmLikes(int film_id) {
-        return filmStorage.getFilmLikes(film_id);
+    public List<Integer> getFilmLikes(int filmId) {
+        return filmStorage.getFilmLikes(filmId);
     }
 
     public Film deleteLike(int id, int userId) {
