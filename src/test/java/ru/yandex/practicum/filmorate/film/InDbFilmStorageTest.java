@@ -100,11 +100,9 @@ public class InDbFilmStorageTest {
 
         assertThat(testFilm).extracting("id").isNotNull();
         assertThat(testFilm).hasFieldOrPropertyWithValue("name", "film1");
-        assertThat(testFilm).hasFieldOrPropertyWithValue
-                ("description", "film1Description");
+        assertThat(testFilm).hasFieldOrPropertyWithValue("description", "film1Description");
         assertThat(testFilm).hasFieldOrPropertyWithValue("releaseDate", releaseDate);
-        assertThat(testFilm).hasFieldOrPropertyWithValue
-                ("duration", 110);
+        assertThat(testFilm).hasFieldOrPropertyWithValue("duration", 110);
         assertThat(testFilm).hasFieldOrPropertyWithValue("mpa", mpa);
         assertThat(testFilm).hasFieldOrPropertyWithValue("genres", Set.of(new Genre(1, "Комедия")));
     }
@@ -119,12 +117,9 @@ public class InDbFilmStorageTest {
 
         assertThat(testFilm).extracting("id").isNotNull();
         assertThat(testFilm).hasFieldOrPropertyWithValue("name", "film2");
-        assertThat(testFilm).hasFieldOrPropertyWithValue
-                ("description", "film2Description");
-        assertThat(testFilm).hasFieldOrPropertyWithValue
-                ("releaseDate", LocalDate.of(2005, 12, 16));
-        assertThat(testFilm).hasFieldOrPropertyWithValue
-                ("duration", 60);
+        assertThat(testFilm).hasFieldOrPropertyWithValue("description", "film2Description");
+        assertThat(testFilm).hasFieldOrPropertyWithValue("releaseDate", LocalDate.of(2005, 12, 16));
+        assertThat(testFilm).hasFieldOrPropertyWithValue("duration", 60);
         assertThat(testFilm).hasFieldOrPropertyWithValue("mpa", new Mpa(2, "PG"));
         assertThat(testFilm).hasFieldOrPropertyWithValue("genres", Set.of(new Genre(2, "Драма")));
     }
