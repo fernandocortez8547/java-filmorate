@@ -47,12 +47,10 @@ public class InDbFilmStorageTest {
             .build();
 
     private final Film film3 = Film.builder()
-            .name("film3")
-            .description("film3Description")
+            .name("film3").description("film3Description")
             .releaseDate(LocalDate.of(2010, 6, 6))
             .duration(40)
-            .mpa(new Mpa(3, null))
-            .genres(Set.of(new Genre(3, null)))
+            .mpa(new Mpa(3, null)).genres(Set.of(new Genre(3, null)))
             .build();
 
     private final User user1 = User.builder()
@@ -65,12 +63,10 @@ public class InDbFilmStorageTest {
     private final User user2 = User.builder()
             .email("user2@yandex.ru")
             .login("user2")
-            .name("user2")
-            .birthday(LocalDate.of(2004, 11, 15))
+            .name("user2").birthday(LocalDate.of(2004, 11, 15))
             .build();
 
-    private final User user3 = User.builder()
-            .email("user3@yandex.ru")
+    private final User user3 = User.builder().email("user3@yandex.ru")
             .login("user3")
             .name("user3")
             .birthday(LocalDate.of(2003, 11, 14))
