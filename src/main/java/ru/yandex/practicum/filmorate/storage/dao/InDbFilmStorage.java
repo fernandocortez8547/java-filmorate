@@ -117,7 +117,7 @@ public class InDbFilmStorage implements FilmStorage {
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sqlQuery, id);
 
-        if(!rowSet.next()) {
+        if (!rowSet.next()) {
             throw new UnknownIdExeption("Storage don't have film with id " + id);
         }
 
@@ -251,3 +251,4 @@ public class InDbFilmStorage implements FilmStorage {
         );
     }
 }
+
