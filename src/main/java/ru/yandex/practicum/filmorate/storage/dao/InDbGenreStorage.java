@@ -25,7 +25,7 @@ public class InDbGenreStorage {
     public Genre getGenreById(int id) {
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from genre where genre_id = ?", id);
 
-        if(userRows.next()) {
+        if (userRows.next()) {
             return new Genre(
                     userRows.getInt("genre_id"),
                     userRows.getString("name")

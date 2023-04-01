@@ -25,7 +25,7 @@ public class InDbMpaStorage {
     public Mpa getMpaById(int id) {
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from rating where rating_id = ?", id);
 
-        if(userRows.next()) {
+        if (userRows.next()) {
             return new Mpa(
                     userRows.getInt("rating_id"),
                     userRows.getString("name")

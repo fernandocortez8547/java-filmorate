@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
 import ru.yandex.practicum.filmorate.annotation.AfterThan;
+
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.Set;
@@ -19,7 +20,7 @@ public class Film {
     private final String description;
     @AfterThan
     private final LocalDate releaseDate;
-    @Positive (message = "длительность фильма должна быть больше 0")
+    @Positive(message = "длительность фильма должна быть больше 0")
     private final int duration;
     private Mpa mpa;
     private Set<Genre> genres;
