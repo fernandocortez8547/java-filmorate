@@ -47,12 +47,10 @@ public class InDbUserStorageTest {
 
         assertThat(user).extracting("id").isNotNull();
         assertThat(user).hasFieldOrPropertyWithValue("email", "user1@yandex.ru");
-        assertThat(user).hasFieldOrPropertyWithValue
-                ("login", "user1");
+        assertThat(user).hasFieldOrPropertyWithValue("login", "user1");
         assertThat(user).hasFieldOrPropertyWithValue("birthday",
                 LocalDate.of(2005, 12, 16));
-        assertThat(user).hasFieldOrPropertyWithValue
-                ("name", "user1");
+        assertThat(user).hasFieldOrPropertyWithValue("name", "user1");
     }
 
     @Test
@@ -65,12 +63,9 @@ public class InDbUserStorageTest {
 
         assertThat(user2).extracting("id").isNotNull();
         assertThat(user2).hasFieldOrPropertyWithValue("email", "user2@yandex.ru");
-        assertThat(user2).hasFieldOrPropertyWithValue
-                ("login", "user2");
-        assertThat(user2).hasFieldOrPropertyWithValue("birthday",
-                LocalDate.of(2004, 11, 15));
-        assertThat(user2).hasFieldOrPropertyWithValue
-                ("name", "user2");
+        assertThat(user2).hasFieldOrPropertyWithValue("login", "user2");
+        assertThat(user2).hasFieldOrPropertyWithValue("birthday", LocalDate.of(2004, 11, 15));
+        assertThat(user2).hasFieldOrPropertyWithValue("name", "user2");
     }
 
     @Test
