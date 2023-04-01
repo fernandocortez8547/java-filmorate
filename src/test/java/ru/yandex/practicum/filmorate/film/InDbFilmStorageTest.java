@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate;
+package ru.yandex.practicum.filmorate.film;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import ru.yandex.practicum.filmorate.CreateConfiguredDb;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -17,8 +18,6 @@ import ru.yandex.practicum.filmorate.storage.dao.InDbFilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.InDbUserStorage;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 

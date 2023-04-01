@@ -1,9 +1,10 @@
-package ru.yandex.practicum.filmorate;
+package ru.yandex.practicum.filmorate.user;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import ru.yandex.practicum.filmorate.CreateConfiguredDb;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.storage.dao.InDbUserStorage;
