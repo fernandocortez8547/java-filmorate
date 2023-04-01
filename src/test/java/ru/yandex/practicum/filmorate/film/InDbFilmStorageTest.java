@@ -47,11 +47,8 @@ public class InDbFilmStorageTest {
             .build();
 
     private final Film film3 = Film.builder()
-            .name("film3").description("film3Description")
-            .releaseDate(LocalDate.of(2010, 6, 6))
-            .duration(40)
-            .mpa(new Mpa(3, null)).genres(Set.of(new Genre(3, null)))
-            .build();
+            .name("film3").description("film3Description").releaseDate(LocalDate.of(2010, 6, 6))
+            .duration(40).mpa(new Mpa(3, null)).genres(Set.of(new Genre(3, null))).build();
 
     private final User user1 = User.builder()
             .email("user1@yandex.ru")
