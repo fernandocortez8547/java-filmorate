@@ -17,7 +17,10 @@ import ru.yandex.practicum.filmorate.storage.dao.InDbFilmStorage;
 import ru.yandex.practicum.filmorate.storage.dao.InDbUserStorage;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -32,7 +35,7 @@ public class InDbFilmStorageTest {
             .releaseDate(LocalDate.of(2020, 1, 1))
             .duration(110)
             .mpa(new Mpa(1, null))
-            .genres(List.of(new Genre(1, null)))
+            .genres(Set.of(new Genre(1, null)))
             .build();
 
     private final Film film2 = Film.builder()
@@ -41,7 +44,7 @@ public class InDbFilmStorageTest {
             .releaseDate(LocalDate.of(2005, 12, 16))
             .duration(60)
             .mpa(new Mpa(2, null))
-            .genres(List.of(new Genre(2, null)))
+            .genres(Set.of(new Genre(2, null)))
             .build();
 
     private final Film film3 = Film.builder()
@@ -50,7 +53,7 @@ public class InDbFilmStorageTest {
             .releaseDate(LocalDate.of(2010, 6, 6))
             .duration(40)
             .mpa(new Mpa(3, null))
-            .genres(List.of(new Genre(3, null)))
+            .genres(Set.of(new Genre(3, null)))
             .build();
 
     private final User user1 = User.builder()
@@ -93,7 +96,6 @@ public class InDbFilmStorageTest {
     void addFilmTest() {
         LocalDate releaseDate = LocalDate.of(2020, 1, 1);
         Mpa mpa = new Mpa(1, "G");
-        List<Genre> genres = List.of(new Genre(1, "Комедия"));
 
         Film testFilm = inDbFilmStorage.addFilm(film1);
 
@@ -104,8 +106,8 @@ public class InDbFilmStorageTest {
         assertThat(testFilm).hasFieldOrPropertyWithValue("releaseDate", releaseDate);
         assertThat(testFilm).hasFieldOrPropertyWithValue
                 ("duration", 110);
-        assertThat(testFilm).hasFieldOrPropertyWithValue("rating", mpa);
-        assertThat(testFilm).hasFieldOrPropertyWithValue("genres", genres);
+        assertThat(testFilm).hasFieldOrPropertyWithValue("mpa", mpa);
+        assertThat(testFilm).hasFieldOrPropertyWithValue("genres", Set.of(new Genre(1, "Комедия")));
     }
 
     @Test
@@ -124,8 +126,8 @@ public class InDbFilmStorageTest {
                 ("releaseDate", LocalDate.of(2005, 12, 16));
         assertThat(testFilm).hasFieldOrPropertyWithValue
                 ("duration", 60);
-        assertThat(testFilm).hasFieldOrPropertyWithValue("rating", new Mpa(2, "PG"));
-        assertThat(testFilm).hasFieldOrPropertyWithValue("genres", List.of(new Genre(2, "Драма")));
+        assertThat(testFilm).hasFieldOrPropertyWithValue("mpa", new Mpa(2, "PG"));
+        assertThat(testFilm).hasFieldOrPropertyWithValue("genres", Set.of(new Genre(2, "Драма")));
     }
 
     @Test

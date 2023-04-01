@@ -4,7 +4,9 @@ import lombok.*;
 import ru.yandex.practicum.filmorate.annotation.AfterThan;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @EqualsAndHashCode(exclude = {"id"})
 @Getter
@@ -22,5 +24,5 @@ public class Film {
     @Positive (message = "длительность фильма должна быть больше 0")
     private final int duration;
     private Mpa mpa;
-    private List<Genre> genres;
+    private Set<Genre> genres;
 }

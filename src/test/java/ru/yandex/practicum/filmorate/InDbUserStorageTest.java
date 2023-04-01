@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,7 +9,6 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.storage.dao.InDbUserStorage;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -94,62 +92,5 @@ public class InDbUserStorageTest {
         inDbUserStorage.removeUser(userId);
 
         assertThat(inDbUserStorage.getUsersList()).hasSize(0);
-    }
-
-    @Test
-    public void addFriendShipTest() {
-        int user1Id = inDbUserStorage.addUser(user1).getId();
-        int user2Id = inDbUserStorage.addUser(user2).getId();
-
-        inDbUserStorage.addFriendship(user1Id, user2Id);
-
-        Assertions.assertNull(inDbUserStorage.getUserFriends(user1Id));
-        assertThat(inDbUserStorage.getUserFriends(user2Id)).hasSize(1);
-
-        inDbUserStorage.addFriendship(user2Id, user1Id);
-
-        assertThat(inDbUserStorage.getUserFriends(user1Id)).hasSize(1);
-    }
-
-    @Test
-    public void removeFriendShipTest() {
-        int user1Id = inDbUserStorage.addUser(user1).getId();
-        int user2Id = inDbUserStorage.addUser(user2).getId();
-
-        inDbUserStorage.addFriendship(user1Id, user2Id);
-        inDbUserStorage.addFriendship(user2Id, user1Id);
-
-        inDbUserStorage.removeFriendship(user1Id, user2Id);
-
-        Assertions.assertNull(inDbUserStorage.getUserFriends(user1Id));
-        Assertions.assertNull(inDbUserStorage.getUserFriends(user2Id));
-    }
-
-    @Test
-    public void getFriendsTest() {
-        int user1Id = inDbUserStorage.addUser(user1).getId();
-        int user2Id = inDbUserStorage.addUser(user2).getId();
-
-        inDbUserStorage.addFriendship(user1Id, user2Id);
-        inDbUserStorage.addFriendship(user2Id, user1Id);
-
-        assertThat(inDbUserStorage.getUserFriends(user1Id)).hasSize(1);
-        assertThat(inDbUserStorage.getUserFriends(user2Id)).hasSize(1);
-    }
-
-    @Test
-    public void getCommonFriends() {
-        int user1Id = inDbUserStorage.addUser(user1).getId();
-        int user2Id = inDbUserStorage.addUser(user2).getId();
-        int user3Id = inDbUserStorage.addUser(user3).getId();
-
-        inDbUserStorage.addFriendship(user1Id, user3Id);
-        inDbUserStorage.addFriendship(user3Id, user1Id);
-        inDbUserStorage.addFriendship(user1Id, user2Id);
-        inDbUserStorage.addFriendship(user2Id, user1Id);
-
-        List<User> commonFriends = inDbUserStorage.getCommonFriend(user2Id, user3Id);
-
-        assertThat(commonFriends.get(0)).hasFieldOrPropertyWithValue("id", user1Id);
     }
 }

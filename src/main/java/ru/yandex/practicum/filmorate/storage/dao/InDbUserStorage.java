@@ -15,6 +15,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -72,16 +73,24 @@ public class InDbUserStorage implements UserStorage {
 
     @Override
     public User getUser(int id) {
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet("SELECT * FROM \"user\" WHERE user_id = ?", id);
+
+        if (!rowSet.next()) {
+            throw new UnknownIdExeption("Storage don't have user with id " + id);
+        }
+
         return jdbcTemplate.queryForObject("SELECT * FROM \"user\" WHERE user_id = ?", this::makeUser, id);
     }
 
     @Override
     public void removeUser(int id) {
+        jdbcTemplate.update("DELETE FROM friends_request WHERE user_id = ?", id);
+        jdbcTemplate.update("DELETE FROM friends_request WHERE friend_id = ?", id);
         jdbcTemplate.update("DELETE FROM \"user\" WHERE user_id = ?", id);
     }
 
     @Override
-    public User addFriendship(int userId, int friendId) {
+    public List<Integer> addFriendship(int userId, int friendId) {
         validate(userId, friendId);
 
         final String firstUserQuery;
@@ -97,46 +106,46 @@ public class InDbUserStorage implements UserStorage {
             jdbcTemplate.update(secondUserQuery, friendId, userId, true);
         }
 
-
-        return getUser(userId);
+        return List.of(userId, friendId);
     }
 
     @Override
     public List<User> getUserFriends(int id) {
         final String getFriendsQuery = "SELECT * FROM \"user\" AS u " +
                 "LEFT JOIN friends_request AS fr ON u.user_id = fr.friend_id " +
-                "WHERE fr.status = true AND fr.user_id = ?";
+                "WHERE fr.status = false AND fr.user_id = ?";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(getFriendsQuery, id);
 
         if (rowSet.next())
             return jdbcTemplate.query(getFriendsQuery, this::makeUser, id);
         else
-            return null;
+            return Collections.emptyList();
     }
 
     @Override
     public void removeFriendship(int userId, int friendId) {
-        final String deleteFriendQuery = "DELETE FROM friends_request WHERE user_id = ?";
+        final String deleteUserIdQuery = "DELETE FROM friends_request WHERE user_id = ? AND friend_id = ?";
+        final String deleteFriendIdQuery = "DELETE FROM friends_request WHERE friend_id = ? AND user_id = ?";
 
-        jdbcTemplate.update(deleteFriendQuery, userId);
-        jdbcTemplate.update(deleteFriendQuery, friendId);
+        jdbcTemplate.update(deleteFriendIdQuery, userId, friendId);
+        jdbcTemplate.update(deleteUserIdQuery, userId, friendId);
     }
 
     @Override
     public List<User> getCommonFriend(int userId, int friendId) {
         final String commonFriendQuery = "SELECT * FROM \"user\" AS u " +
                 "LEFT JOIN " +
-                "(SELECT friend_id FROM friends_request as fr1 WHERE fr1.user_id = ? AND fr1.status = true)" +
+                "(SELECT friend_id FROM friends_request as fr1 WHERE fr1.user_id = ? AND fr1.status = false)" +
                 " AS fr2 ON u.user_id = fr2.friend_id " +
                 "WHERE fr2.friend_id IN " +
-                "(SELECT friend_id FROM friends_request AS fr3 WHERE fr3.user_id = ? AND fr3.status = true)";
+                "(SELECT friend_id FROM friends_request AS fr3 WHERE fr3.user_id = ? AND fr3.status = false)";
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(commonFriendQuery, userId, friendId);
 
         if (rowSet.next()) {
             return jdbcTemplate.query(commonFriendQuery, this::makeUser, userId, friendId);
         } else
-            return null;
+            return Collections.emptyList();
     }
 
     private boolean findFriendship(int userId, int friendId) {
@@ -171,7 +180,7 @@ public class InDbUserStorage implements UserStorage {
     private String nameValidate(User user) {
         String name = user.getName();
 
-        if(name == null || name.length() == 0) {
+        if (name == null || name.length() == 0) {
             return user.getLogin();
         }
 

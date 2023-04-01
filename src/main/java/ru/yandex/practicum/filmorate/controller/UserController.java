@@ -61,13 +61,13 @@ public class UserController {
     }
 
     @PutMapping("{id}/friends/{friendId}")
-    public User addFriendsList(@PathVariable int id, @PathVariable int friendId) {
+    public List<Integer> addFriendsList(@PathVariable int id, @PathVariable int friendId) {
         log.info("Request started http-method=POST http-path=/users/{id}/friends{friendId}");
 
-        User user = userService.addUsersFriends(id, friendId);
+        List<Integer> users = userService.addUsersFriends(id, friendId);
 
         log.info("Successful add friend. Request finished.");
-        return user;
+        return users;
     }
 
     @GetMapping("{id}/friends")
