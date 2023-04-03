@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -49,18 +50,15 @@ public class InDbUserStorage implements UserStorage {
     public User updateUser(User user) {
         user.setName(nameValidate(user));
 
-        final String findUserQuery = "SELECT * FROM \"user\" WHERE user_id = ?";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(findUserQuery, user.getId());
-
-        if (!rowSet.next()) {
-            throw new UnknownIdExeption("Storage don't have user with id " + user.getId());
-        }
-
         final String updateUserQuery = "UPDATE \"user\" SET email = ?, login = ?," +
                 " name = ?, birthday = ? WHERE user_id = ?";
 
-        jdbcTemplate.update(updateUserQuery, user.getEmail(), user.getLogin(), user.getName(),
+        int updateStatus = jdbcTemplate.update(updateUserQuery, user.getEmail(), user.getLogin(), user.getName(),
                 user.getBirthday(), user.getId());
+
+        if(updateStatus == 0) {
+            throw new UnknownIdExeption("Storage don't have user with id " + user.getId());
+        }
 
         return user;
     }
@@ -72,13 +70,11 @@ public class InDbUserStorage implements UserStorage {
 
     @Override
     public User getUser(int id) {
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet("SELECT * FROM \"user\" WHERE user_id = ?", id);
-
-        if (!rowSet.next()) {
+        try {
+            return jdbcTemplate.queryForObject("SELECT * FROM \"user\" WHERE user_id = ?", this::makeUser, id);
+        } catch (EmptyResultDataAccessException e) {
             throw new UnknownIdExeption("Storage don't have user with id " + id);
         }
-
-        return jdbcTemplate.queryForObject("SELECT * FROM \"user\" WHERE user_id = ?", this::makeUser, id);
     }
 
     @Override
@@ -139,12 +135,7 @@ public class InDbUserStorage implements UserStorage {
                 "WHERE fr2.friend_id IN " +
                 "(SELECT friend_id FROM friends_request AS fr3 WHERE fr3.user_id = ? AND fr3.status = false)";
 
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(commonFriendQuery, userId, friendId);
-
-        if (rowSet.next()) {
             return jdbcTemplate.query(commonFriendQuery, this::makeUser, userId, friendId);
-        } else
-            return Collections.emptyList();
     }
 
     private boolean findFriendship(int userId, int friendId) {
@@ -160,7 +151,7 @@ public class InDbUserStorage implements UserStorage {
         SqlRowSet friendRowSet = jdbcTemplate.queryForRowSet(userValidateQuery, friendId);
 
         if (!userRowSet.next() || !friendRowSet.next()) {
-            throw new UnknownIdExeption("Storage don't have user with id's.");
+            throw new UnknownIdExeption("Storage don't have user with id's " + userId + " " + friendId);
         }
     }
 

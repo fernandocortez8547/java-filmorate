@@ -18,7 +18,7 @@ import java.util.List;
 public class GenreController {
     private final GenreService genreService;
 
-    Logger log = LoggerFactory.getLogger(GenreController.class);
+    private static final Logger log = LoggerFactory.getLogger(GenreController.class);
 
     @GetMapping
     public List<Genre> getGenres() {

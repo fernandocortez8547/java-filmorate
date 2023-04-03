@@ -12,6 +12,7 @@ import java.util.Set;
 @Setter
 @Builder(toBuilder = true)
 @AllArgsConstructor
+@ToString
 public class Film {
     private int id;
     @NotBlank(message = "название фильма не должно быть пустым")
