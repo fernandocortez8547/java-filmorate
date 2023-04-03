@@ -1,17 +1,22 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ObjectAlreadyExistException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class FilmService {
-
-    private final FilmStorage filmStorage;
+    @Autowired
+    private FilmStorage filmStorage;
+    @Autowired
+    private UserStorage userStorage;
 
     public Film addFilm(Film film) {
         return filmStorage.addFilm(film);
@@ -34,18 +39,30 @@ public class FilmService {
     }
 
     public Film addLike(int filmId, int userId) {
-        return filmStorage.addLike(filmId, userId);
-    }
+        Film film = filmStorage.getFilm(filmId);
+        User user = userStorage.getUser(userId);
+        if (!film.getLikesList().contains(user.getId())) {
+            film.addLike(user.getId());
+        } else
+            throw new ObjectAlreadyExistException
+                    ("User '" + user.getId() + "' already liked film '" + film.getName() + "'");
 
-    public List<Integer> getFilmLikes(int filmId) {
-        return filmStorage.getFilmLikes(filmId);
+        return film;
     }
 
     public Film deleteLike(int id, int userId) {
-        return filmStorage.deleteLike(id, userId);
+        Film film = filmStorage.getFilm(id);
+        User user = userStorage.getUser(userId);
+
+        film.removeLike(user.getId());
+
+        return film;
     }
 
     public List<Film> sortFilmsList(int count) {
-        return filmStorage.findMostPopularFilm(count);
+        return filmStorage.getFilmsList().stream()
+                .sorted((o1, o2) -> o2.getLikesList().size() - o1.getLikesList().size())
+                .limit(count)
+                .collect(Collectors.toList());
     }
 }
