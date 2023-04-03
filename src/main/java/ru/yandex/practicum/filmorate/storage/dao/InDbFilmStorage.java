@@ -29,7 +29,7 @@ public class InDbFilmStorage implements FilmStorage {
     @Override
     public Film addFilm(final Film film) {
         final String filmAddQuery = "INSERT INTO film " +
-                "(film_name, film_description, release_date, duration, rating)" +
+                "(film_name, film_description, release_date, duration, rating) " +
                 "VALUES (?, ?, ?, ?, ?)";
         KeyHolder id = new GeneratedKeyHolder();
 

@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.storage.dao.InDbFilmStorage;
+import ru.yandex.practicum.filmorate.storage.dao.InDbMpaStorage;
 import ru.yandex.practicum.filmorate.storage.dao.InDbUserStorage;
 
 import java.time.LocalDate;
@@ -25,7 +26,8 @@ import java.util.Set;
 @AutoConfigureTestDatabase
 public class InDbFilmStorageTest {
     private final JdbcTemplate jdbcTemplate = new JdbcTemplate(CreateConfiguredDb.createEmbeddedDatabase());
-    private final FilmStorage inDbFilmStorage = new InDbFilmStorage(jdbcTemplate);
+    InDbMpaStorage mpaStorage = new InDbMpaStorage(jdbcTemplate);
+    private final FilmStorage inDbFilmStorage = new InDbFilmStorage(jdbcTemplate, mpaStorage);
     private final UserStorage inDbUserStorage = new InDbUserStorage(jdbcTemplate);
 
     private final Film film1 = Film.builder()
@@ -33,8 +35,8 @@ public class InDbFilmStorageTest {
             .description("film1Description")
             .releaseDate(LocalDate.of(2020, 1, 1))
             .duration(110)
-            .mpa(new Mpa(1, null))
-            .genres(Set.of(new Genre(1, null)))
+            .mpa(new Mpa(1, "G"))
+            .genres(Set.of(new Genre(1, "asd")))
             .build();
 
     private final Film film2 = Film.builder()
@@ -73,12 +75,10 @@ public class InDbFilmStorageTest {
     public void deleteExcessTable() {
         final String deleteFilmQuery = "DELETE FROM film";
         final String deleteGenreQuery = "DELETE FROM film_genres";
-        final String deleteRatingQuery = "DELETE FROM film_rating";
         final String deleteLikeQuery = "DELETE FROM film_like";
         final String deleteUserQuery = "DELETE FROM \"user\"";
 
         jdbcTemplate.update(deleteGenreQuery);
-        jdbcTemplate.update(deleteRatingQuery);
         jdbcTemplate.update(deleteLikeQuery);
         jdbcTemplate.update(deleteFilmQuery);
         jdbcTemplate.update(deleteUserQuery);
