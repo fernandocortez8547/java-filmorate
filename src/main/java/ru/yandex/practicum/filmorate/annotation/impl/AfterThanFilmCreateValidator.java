@@ -1,11 +1,9 @@
-package ru.yandex.practicum.filmorate.annotation.implementation;
+package ru.yandex.practicum.filmorate.annotation.impl;
 
 import ru.yandex.practicum.filmorate.annotation.AfterThan;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import javax.validation.Payload;
-import java.lang.annotation.Annotation;
 import java.time.LocalDate;
 
 public class AfterThanFilmCreateValidator implements ConstraintValidator<AfterThan, LocalDate> {
