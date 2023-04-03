@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.annotation;
 
-import ru.yandex.practicum.filmorate.annotation.impl.NotSpaceValidate;
+import ru.yandex.practicum.filmorate.annotation.implementation.NotSpaceValidate;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -10,11 +10,12 @@ import ru.yandex.practicum.filmorate.model.Film;
 import javax.validation.Valid;
 import java.util.*;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/films")
-@RequiredArgsConstructor
 public class FilmController {
-    private final FilmService filmService;
+    @Autowired
+    private FilmService filmService;
 
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
@@ -67,11 +68,6 @@ public class FilmController {
 
         log.info("Successful add like. Request finished.");
         return film;
-    }
-
-    @GetMapping("{id}/like")
-    public List<Integer> getFilmLikes(@PathVariable int id) {
-        return filmService.getFilmLikes(id);
     }
 
     @DeleteMapping("{id}/like/{userId}")
