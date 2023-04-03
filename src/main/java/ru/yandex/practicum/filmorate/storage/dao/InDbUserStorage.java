@@ -56,7 +56,7 @@ public class InDbUserStorage implements UserStorage {
         int updateStatus = jdbcTemplate.update(updateUserQuery, user.getEmail(), user.getLogin(), user.getName(),
                 user.getBirthday(), user.getId());
 
-        if(updateStatus == 0) {
+        if (updateStatus == 0) {
             throw new UnknownIdExeption("Storage don't have user with id " + user.getId());
         }
 
