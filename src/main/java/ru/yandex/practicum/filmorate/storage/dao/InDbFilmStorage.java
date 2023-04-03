@@ -192,7 +192,7 @@ public class InDbFilmStorage implements FilmStorage {
 
         try {
             return jdbcTemplate.queryForObject(mpaSqlQuery, this::makeRating, filmId);
-        } catch (EmptyResultDataAccessException e ) {
+        } catch (EmptyResultDataAccessException e) {
             return null;
         }
     }
