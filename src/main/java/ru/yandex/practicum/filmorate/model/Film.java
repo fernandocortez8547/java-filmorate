@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.annotation.AfterThan;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @EqualsAndHashCode(exclude = {"id"})
@@ -25,4 +26,8 @@ public class Film {
     private final int duration;
     private Mpa mpa;
     private Set<Genre> genres;
+
+    public void addGenre(Genre genre) {
+        genres.add(genre);
+    }
 }

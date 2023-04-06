@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -24,7 +25,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class InDbFilmStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final InDbMpaStorage mpaStorage;
 
     @Override
     public Film addFilm(final Film film) {
@@ -48,12 +48,6 @@ public class InDbFilmStorage implements FilmStorage {
         }, id);
 
         film.setId(Objects.requireNonNull(id.getKey()).intValue());
-
-        if (film.getMpa() != null) {
-            String name = mpaStorage.getMpaById(film.getMpa().getId()).getName();
-            film.getMpa().setName(name);
-        }
-
         if (film.getGenres() != null)
             film.setGenres(setGenres(film));
         else
@@ -75,16 +69,9 @@ public class InDbFilmStorage implements FilmStorage {
             jdbcTemplate.update("DELETE FROM film_genres WHERE film_id = ?", film.getId());
         }
 
-        int updateStatus;
-        if (film.getMpa() != null) {
-            film.setMpa(mpaStorage.getMpaById(film.getMpa().getId()));
-            updateStatus = jdbcTemplate.update(filmMpaQuery,
-                    film.getName(), film.getDescription(),
-                    film.getReleaseDate(), film.getDuration(), film.getMpa().getId(),  film.getId());
-        } else
-            updateStatus = jdbcTemplate.update(filmMpaQuery,
-                    film.getName(), film.getDescription(),
-                    film.getReleaseDate(), film.getDuration(), Types.NULL, film.getId());
+        int updateStatus = jdbcTemplate.update(filmMpaQuery,
+                film.getName(), film.getDescription(),
+                film.getReleaseDate(), film.getDuration(), film.getMpa().getId(), film.getId());
 
         if (updateStatus == 0) {
             throw new UnknownIdExeption("Storage don't have film with id " + film.getId());
@@ -95,13 +82,23 @@ public class InDbFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> getFilmsList() {
-        return jdbcTemplate.query("SELECT * FROM film", this::makeFilm);
+        List<Film> films = jdbcTemplate.query("SELECT * FROM film as f JOIN rating as r ON f.rating = r.rating_id",
+                this::makeFilm);
+
+        return connectingAllFilmGenre(films);
     }
 
     @Override
     public Film getFilm(int id) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM film WHERE film_id = ?", this::makeFilm, id);
+            Film film = jdbcTemplate.queryForObject("SELECT * FROM film as f " +
+                            "JOIN rating as r ON f.rating = r.rating_id WHERE film_id = ?",
+                    this::makeFilm, id);
+
+            assert film != null;
+            film.setGenres(getSpecificGenres(id));
+
+            return film;
         } catch (EmptyResultDataAccessException e) {
             throw new UnknownIdExeption("Storage don't have film with id " + id);
         }
@@ -143,14 +140,16 @@ public class InDbFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> findMostPopularFilm(int limit) {
-        final String mostLikeFilmQuery = "SELECT f.*, fl.cf FROM film AS f " +
+        final String mostLikeFilmQuery = "SELECT f.*, fl.cf FROM " +
+                "(SELECT film.*, r.name FROM film JOIN rating as r ON film.rating = r.rating_id) AS f " +
                 "LEFT JOIN " +
                 "(SELECT film_id, COUNT(user_id) as cf FROM film_like GROUP BY film_id ORDER BY COUNT(user_id)) " +
                 "AS fl ON f.film_id = fl.film_id " +
                 "ORDER BY fl.cf DESC " +
                 "LIMIT ?";
+        List<Film> films = jdbcTemplate.query(mostLikeFilmQuery, this::makeFilm, limit);
 
-        return jdbcTemplate.query(mostLikeFilmQuery, this::makeFilm, limit);
+        return connectingAllFilmGenre(films);
     }
 
     private void validate(int filmId, int userId) {
@@ -175,30 +174,47 @@ public class InDbFilmStorage implements FilmStorage {
         }
     }
 
-    private Set<Genre> findGenres(int filmId) {
-        final String genresSqlQuery = "SELECT fg.genre_id, name " +
-                "FROM genre as g " +
-                "LEFT JOIN film_genres as fg on g.genre_id = fg.genre_id " +
-                "WHERE fg.film_id = ?";
+    private List<Film> connectingAllFilmGenre(List<Film> films) {
+        List<HashMap<Integer, Genre>> genre = jdbcTemplate.query(
+                "SELECT fg.*, g.name FROM film_genres as fg JOIN genre as g ON fg.genre_id = g.genre_id",
+                this::getAllGenres);
 
-        return new HashSet<>(jdbcTemplate.query(genresSqlQuery, this::makeGenre, filmId));
-    }
-
-    private Mpa findMpa(int filmId) {
-        final String mpaSqlQuery = "SELECT r.rating_id, r.name " +
-                "FROM film as f " +
-                "LEFT JOIN rating as r on f.rating = r.rating_id " +
-                "WHERE f.film_id = ? AND f.rating <> 0";
-
-        try {
-            return jdbcTemplate.queryForObject(mpaSqlQuery, this::makeRating, filmId);
-        } catch (EmptyResultDataAccessException e) {
-            return null;
+        for (Film film : films) {
+            Set<Genre> genres = new HashSet<>();
+            for (HashMap<Integer, Genre> hm : genre) {
+                if (hm.containsKey(film.getId())) {
+                    genres.add(hm.get(film.getId()));
+                }
+            }
+            film.setGenres(genres);
         }
+
+        return films;
+    }
+    
+    private HashMap<Integer, Genre> getAllGenres(ResultSet rs, int rn) throws SQLException {
+        HashMap<Integer, Genre> genres = new HashMap<>();
+        genres.put(rs.getInt("film_id"),
+                new Genre(rs.getInt("genre_id"), rs.getString("name")));
+
+        return genres;
     }
 
+    private Set<Genre> getSpecificGenres(int filmId) {
+        RowMapper<Genre> rowMapper = (rs, rn) -> new Genre(
+                rs.getInt("genre_id"),
+                rs.getString("name"));
+        
+        return new HashSet<>(jdbcTemplate.query(
+                "SELECT fg.*, g.name " +
+                        "FROM film_genres as fg " +
+                        "JOIN genre as g ON fg.genre_id = g.genre_id WHERE film_id = ?",
+                rowMapper, filmId));
+    }
+    
     private Film makeFilm(ResultSet rs, int rn) throws SQLException {
         int filmId = rs.getInt("film_id");
+        Mpa mpa = new Mpa(rs.getInt("rating"), rs.getString("name"));
 
         return new Film(
                 filmId,
@@ -206,22 +222,8 @@ public class InDbFilmStorage implements FilmStorage {
                 rs.getString("film_description"),
                 rs.getDate("release_date").toLocalDate(),
                 rs.getInt("duration"),
-                findMpa(filmId),
-                findGenres(filmId)
-        );
-    }
-
-    private Mpa makeRating(ResultSet rs, int rn) throws SQLException {
-        return new Mpa(
-                rs.getInt("rating_id"),
-                rs.getString("name")
-        );
-    }
-
-    private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
-        return new Genre(
-                rs.getInt("genre_id"),
-                rs.getString("name")
+                mpa,
+                null
         );
     }
 
@@ -243,7 +245,7 @@ public class InDbFilmStorage implements FilmStorage {
                     }
                 });
 
-        return findGenres(film.getId());
+        return film.getGenres();
     }
 }
 
