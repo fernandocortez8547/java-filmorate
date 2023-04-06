@@ -191,7 +191,7 @@ public class InDbFilmStorage implements FilmStorage {
 
         return films;
     }
-    
+
     private HashMap<Integer, Genre> getAllGenres(ResultSet rs, int rn) throws SQLException {
         HashMap<Integer, Genre> genres = new HashMap<>();
         genres.put(rs.getInt("film_id"),
@@ -204,14 +204,14 @@ public class InDbFilmStorage implements FilmStorage {
         RowMapper<Genre> rowMapper = (rs, rn) -> new Genre(
                 rs.getInt("genre_id"),
                 rs.getString("name"));
-        
+
         return new HashSet<>(jdbcTemplate.query(
                 "SELECT fg.*, g.name " +
                         "FROM film_genres as fg " +
                         "JOIN genre as g ON fg.genre_id = g.genre_id WHERE film_id = ?",
                 rowMapper, filmId));
     }
-    
+
     private Film makeFilm(ResultSet rs, int rn) throws SQLException {
         int filmId = rs.getInt("film_id");
         Mpa mpa = new Mpa(rs.getInt("rating"), rs.getString("name"));
