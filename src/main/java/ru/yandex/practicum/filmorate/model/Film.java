@@ -5,7 +5,6 @@ import ru.yandex.practicum.filmorate.annotation.AfterThan;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @EqualsAndHashCode(exclude = {"id"})
