@@ -15,4 +15,12 @@ public interface FilmStorage {
     Film getFilm(int id);
 
     void removeFilm(int id);
+
+    Film addLike(int filmId, int userId);
+
+    Film deleteLike(int filmId, int userId);
+
+    List<Integer> getFilmLikes(int filmId);
+
+    List<Film> findMostPopularFilm(int limit);
 }

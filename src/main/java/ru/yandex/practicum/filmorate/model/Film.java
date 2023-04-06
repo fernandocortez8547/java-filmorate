@@ -1,33 +1,32 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import ru.yandex.practicum.filmorate.annotation.AfterThan;
 
 import javax.validation.constraints.*;
-
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
-@Data
 @EqualsAndHashCode(exclude = {"id"})
+@Getter
+@Setter
+@Builder(toBuilder = true)
+@AllArgsConstructor
+@ToString
 public class Film {
-    private int id = 0;
+    private int id;
     @NotBlank(message = "название фильма не должно быть пустым")
     private final String name;
-    @Size(max=200)
+    @Size(max = 200)
     private final String description;
     @AfterThan
     private final LocalDate releaseDate;
-    @Positive (message = "длительность фильма должна быть больше 0")
+    @Positive(message = "длительность фильма должна быть больше 0")
     private final int duration;
+    private Mpa mpa;
+    private Set<Genre> genres;
 
-    private List<Integer> likesList = new ArrayList<>();
-
-    public void addLike(int id) {
-        likesList.add(id);
+    public void addGenre(Genre genre) {
+        genres.add(genre);
     }
-
-    public void removeLike(Integer id) { likesList.remove(id); }
 }

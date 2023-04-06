@@ -1,38 +1,26 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import ru.yandex.practicum.filmorate.annotation.NotSpace;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 @EqualsAndHashCode(exclude = {"id"})
+@Builder(toBuilder = true)
 public class User {
-    private int id = 0;
+    private int id;
     @Email
     private final String email;
     @NotBlank
     @NotSpace
     private final String login;
-//    @JsonIgnore
-    private final String name;
+    private String name;
     @Past
     private final LocalDate birthday;
-
-    private List<Integer> friendsList = new ArrayList<>();
-
-    public void addFriend(int id) {
-        friendsList.add(id);
-    }
-
-    public void removeFriend(Integer id) {
-        friendsList.remove(id);
-    }
 }
